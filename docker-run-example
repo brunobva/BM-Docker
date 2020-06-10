@@ -1,0 +1,44 @@
+docker run -dt \
+--name nxfilter \
+-v nxfilter-conf:/nxfilter/conf \
+-v nxfilter-log:/nxfilter/log \
+-v nxfilter-db:/nxfilter/db \
+-p 53:53/udp \
+-p 80:80 \
+-p 443:443 \
+-p 19002-19004:19002-19004 \
+packetworks/nxfilter-base:latest
+
+docker run --name vt-syspass \
+-p 7080:80 --net=vitaebr \
+-v /docker/syspass/appconfig:/var/www/html/sysPass/app/config \
+-v /docker/syspass/app/backup:/var/www/html/sysPass/app/backup \
+-e TZ=America/Sao_Paulo --restart unless-stopped \
+--link vt-db-v57 -d nuxsmin/docker-syspass:latest
+
+$ docker run -d --network some-network --name some-mongo \
+    -e MONGO_INITDB_ROOT_USERNAME=mongoadmin \
+    -e MONGO_INITDB_ROOT_PASSWORD=secret \
+    mongo
+
+docker run -d --network qa-educacao \
+--name qa-mongo \
+--hostname qamongo.vitaebrasil.com.br \
+-e MONGO_INITDB_ROOT_USERNAME=vt-mongoadmin \
+-e MONGO_INITDB_ROOT_PASSWORD=vt@admin \
+-e MONGO_INITD_DATABSE=gf-auditoria \
+-v vt-mongo:/data/db \
+-p 27017-27019:27017-27019 \
+mongo 
+
+docker volume create --name vt-mongo -o type=none -o device=/vitae/mongodb -o o=bind
+
+$ docker run -it --rm --network some-network mongo \
+    mongo --host some-mongo \
+        -u mongoadmin \
+        -p secret \
+        --authenticationDatabase admin \
+        some-db
+> db.getName();
+some-db
+
